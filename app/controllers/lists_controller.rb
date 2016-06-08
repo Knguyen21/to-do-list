@@ -1,10 +1,10 @@
-class ListsController < OpenReadController
+class ListsController < ProtectedController
   before_action :set_list, only: [:show, :update, :destroy]
 
   # GET /lists
   # GET /lists.json
   def index
-    @lists = List.all
+    @lists = current_user.lists
 
     render json: @lists
   end
@@ -18,7 +18,7 @@ class ListsController < OpenReadController
   # POST /lists
   # POST /lists.json
   def create
-    @list = List.new(list_params)
+    @list = current_user.lists.new(list_params)
 
     if @list.save
       render json: @list, status: :created, location: @list
@@ -30,7 +30,7 @@ class ListsController < OpenReadController
   # PATCH/PUT /lists/1
   # PATCH/PUT /lists/1.json
   def update
-    @list = List.find(params[:id])
+    @list = current_user.lists.find(params[:id])
 
     if @list.update(list_params)
       head :no_content
@@ -50,10 +50,10 @@ class ListsController < OpenReadController
   private
 
     def set_list
-      @list = List.find(params[:id])
+      @list = current_user.lists.find(params[:id])
     end
 
     def list_params
-      params.require(:list).permit(:title, :priority, :time_due, :due_by)
+      params.require(:list).permit(:title, :priority, :time_due, :due_by, :user_id, :user)
     end
 end
